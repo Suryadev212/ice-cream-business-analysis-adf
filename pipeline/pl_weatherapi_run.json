@@ -1,0 +1,77 @@
+{
+	"name": "pl_weatherapi_run",
+	"properties": {
+		"activities": [
+			{
+				"name": "Getting Cities Name",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "select city_name from Cities where is_active_flag = 1",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_source_assignment_worknomads_db",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Calling API for Each City",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Getting Cities Name",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Getting Cities Name').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "cityName",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "city_name",
+								"value": {
+									"value": "@item().city_name",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"city_name": {
+				"type": "String"
+			}
+		},
+		"annotations": []
+	}
+}
