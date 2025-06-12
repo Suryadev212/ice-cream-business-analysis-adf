@@ -1,0 +1,37 @@
+{
+	"name": "ds_rest_api_source_weatherapi",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_rest_api_weatherapi",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"city_name": {
+					"value": "@dataset().city_name",
+					"type": "Expression"
+				},
+				"date": {
+					"value": "@dataset().data_pull_date",
+					"type": "Expression"
+				},
+				"api_access_key": {
+					"value": "@dataset().api_access_key",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"city_name": {
+				"type": "string"
+			},
+			"data_pull_date": {
+				"type": "string"
+			},
+			"api_access_key": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}

@@ -5,7 +5,20 @@
 			{
 				"name": "Getting Cities Name",
 				"type": "Lookup",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "API Data Pull Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "File Date Directory",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -47,28 +60,139 @@
 					},
 					"activities": [
 						{
-							"name": "cityName",
-							"type": "SetVariable",
+							"name": "fetching weather data for city",
+							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
 								"secureOutput": false,
 								"secureInput": false
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"variableName": "city_name",
-								"value": {
-									"value": "@item().city_name",
-									"type": "Expression"
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.010",
+									"requestMethod": "GET",
+									"paginationRules": {
+										"supportRFC5988": "true"
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_rest_api_source_weatherapi",
+									"type": "DatasetReference",
+									"parameters": {
+										"city_name": {
+											"value": "@item().city_name",
+											"type": "Expression"
+										},
+										"data_pull_date": {
+											"value": "@variables('api_pull_date')",
+											"type": "Expression"
+										},
+										"api_access_key": {
+											"value": "@pipeline().parameters.api_access_key",
+											"type": "Expression"
+										}
+									}
 								}
-							}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_target_adls_datalake4assignment4wn",
+									"type": "DatasetReference",
+									"parameters": {
+										"straoge_account_url": {
+											"value": "@pipeline().parameters.straoge_account_url",
+											"type": "Expression"
+										},
+										"storage_access_key": {
+											"value": "@pipeline().parameters.storage_access_key",
+											"type": "Expression"
+										},
+										"city_name": {
+											"value": "@item().city_name",
+											"type": "Expression"
+										},
+										"date_directory": {
+											"value": "@variables('date_directory')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						}
 					]
 				}
+			},
+			{
+				"name": "API Data Pull Date",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "api_pull_date",
+					"value": {
+						"value": "@string(utcNow('yyyy-MM-dd'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "File Date Directory",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "date_directory",
+					"value": {
+						"value": "@string(utcNow('yyyyMMddHHmm'))",
+						"type": "Expression"
+					}
+				}
 			}
 		],
+		"parameters": {
+			"straoge_account_url": {
+				"type": "string",
+				"defaultValue": "https://datalake4assignment4wn.dfs.core.windows.net"
+			},
+			"storage_access_key": {
+				"type": "string"
+			},
+			"api_access_key": {
+				"type": "string",
+				"defaultValue": "c7301f3402204b06aca62617251206"
+			}
+		},
 		"variables": {
-			"city_name": {
+			"date_directory": {
+				"type": "String"
+			},
+			"api_pull_date": {
 				"type": "String"
 			}
 		},

@@ -1,0 +1,50 @@
+{
+	"name": "ds_target_adls_datalake4assignment4wn",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_adls_datalake4assignment4wn",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"straoge_account_url": {
+					"value": "@dataset().straoge_account_url",
+					"type": "Expression"
+				},
+				"access_key": {
+					"value": "@dataset().storage_access_key",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"straoge_account_url": {
+				"type": "string"
+			},
+			"storage_access_key": {
+				"type": "string"
+			},
+			"city_name": {
+				"type": "string"
+			},
+			"date_directory": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(dataset().city_name,'_',dataset().date_directory,'.json')",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat(dataset().city_name,'/',dataset().date_directory)",
+					"type": "Expression"
+				},
+				"fileSystem": "weather-api-data"
+			}
+		},
+		"schema": {}
+	}
+}
