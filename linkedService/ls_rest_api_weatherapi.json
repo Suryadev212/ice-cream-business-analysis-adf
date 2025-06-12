@@ -1,0 +1,26 @@
+{
+	"name": "ls_rest_api_weatherapi",
+	"properties": {
+		"parameters": {
+			"city_name": {
+				"type": "string",
+				"defaultValue": "Paris"
+			},
+			"date": {
+				"type": "string",
+				"defaultValue": "2025-06-01"
+			},
+			"api_access_key": {
+				"type": "string",
+				"defaultValue": "c7301f3402204b06aca62617251206"
+			}
+		},
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "@{concat('http://api.weatherapi.com/v1/history.json?key=', linkedService().api_access_key,'&q=',linkedService().city_name,'&dt=',linkedService().date)}",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
