@@ -1,0 +1,9 @@
+{
+	"name": "adf-assignment-worknomads",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "98293ad6-6346-4da6-87cb-da4360b883ad",
+		"tenantId": "6c61ba97-8525-4e2c-a0c4-f1a595216eb6"
+	}
+}
